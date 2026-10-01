@@ -84,7 +84,7 @@ def create_profile():
             "message": "Driver profile already exists"
         }, 409
 
-    data = request.get_json()
+    data = request.get_json() or {}
 
     profile = DriverProfile(
         user_id=user_id,
@@ -110,7 +110,7 @@ def create_profile():
 
 
 # =========================
-# UPDATE DRIVER PROFILE
+# UPDATE / CREATE DRIVER PROFILE
 # =========================
 @driver_bp.route("/profile", methods=["PUT"])
 @jwt_required()
@@ -131,59 +131,79 @@ def update_profile():
             "message": "Only drivers can update this profile"
         }, 403
 
+    data = request.get_json() or {}
+
     profile = DriverProfile.query.filter_by(
         user_id=user_id
     ).first()
 
+    # Create the profile on first save if it does not exist
     if not profile:
-        return {
-            "status": "error",
-            "message": "Driver profile not found"
-        }, 404
+        profile = DriverProfile(
+            user_id=user_id,
+            phone=data.get("phone"),
+            date_of_birth=data.get("date_of_birth"),
+            address=data.get("address"),
+            city=data.get("city"),
+            driving_experience=data.get("driving_experience"),
+            license_number=data.get("license_number"),
+            license_category=data.get("license_category"),
+            skills=data.get("skills"),
+            bio=data.get("bio")
+        )
 
-    data = request.get_json()
+        db.session.add(profile)
+        message = "Driver profile created successfully"
 
-    profile.phone = data.get("phone", profile.phone)
-    profile.date_of_birth = data.get(
-        "date_of_birth",
-        profile.date_of_birth
-    )
-    profile.address = data.get(
-        "address",
-        profile.address
-    )
-    profile.city = data.get(
-        "city",
-        profile.city
-    )
-    profile.driving_experience = data.get(
-        "driving_experience",
-        profile.driving_experience
-    )
-    profile.license_number = data.get(
-        "license_number",
-        profile.license_number
-    )
-    profile.license_category = data.get(
-        "license_category",
-        profile.license_category
-    )
-    profile.skills = data.get(
-        "skills",
-        profile.skills
-    )
-    profile.bio = data.get(
-        "bio",
-        profile.bio
-    )
+    # Update existing profile
+    else:
+        profile.phone = data.get(
+            "phone",
+            profile.phone
+        )
+        profile.date_of_birth = data.get(
+            "date_of_birth",
+            profile.date_of_birth
+        )
+        profile.address = data.get(
+            "address",
+            profile.address
+        )
+        profile.city = data.get(
+            "city",
+            profile.city
+        )
+        profile.driving_experience = data.get(
+            "driving_experience",
+            profile.driving_experience
+        )
+        profile.license_number = data.get(
+            "license_number",
+            profile.license_number
+        )
+        profile.license_category = data.get(
+            "license_category",
+            profile.license_category
+        )
+        profile.skills = data.get(
+            "skills",
+            profile.skills
+        )
+        profile.bio = data.get(
+            "bio",
+            profile.bio
+        )
+        message = "Driver profile updated successfully"
 
     db.session.commit()
 
     return {
         "status": "success",
-        "message": "Driver profile updated successfully",
+        "message": message,
         "profile": profile.to_dict()
     }, 200
+
+
 # ============================================================
 # GET - Employer searches driver profiles
 # ============================================================
