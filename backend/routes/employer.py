@@ -13,6 +13,9 @@ employer_bp = Blueprint(
 )
 
 
+# =========================
+# GET EMPLOYER PROFILE
+# =========================
 @employer_bp.route("/profile", methods=["GET"])
 @jwt_required()
 def get_profile():
@@ -49,6 +52,9 @@ def get_profile():
     }, 200
 
 
+# =========================
+# CREATE EMPLOYER PROFILE
+# =========================
 @employer_bp.route("/profile", methods=["POST"])
 @jwt_required()
 def create_profile():
@@ -78,7 +84,7 @@ def create_profile():
             "message": "Company profile already exists"
         }, 409
 
-    data = request.get_json()
+    data = request.get_json() or {}
 
     company_name = data.get("company_name")
 
@@ -109,6 +115,9 @@ def create_profile():
     }, 201
 
 
+# =========================
+# UPDATE / CREATE EMPLOYER PROFILE
+# =========================
 @employer_bp.route("/profile", methods=["PUT"])
 @jwt_required()
 def update_profile():
@@ -128,57 +137,80 @@ def update_profile():
             "message": "Only employers can update this profile"
         }, 403
 
+    data = request.get_json() or {}
+
+    company_name = data.get("company_name")
+
+    if not company_name:
+        return {
+            "status": "error",
+            "message": "Company name is required"
+        }, 400
+
     profile = EmployerProfile.query.filter_by(
         user_id=user_id
     ).first()
 
+    # Create profile on first save
     if not profile:
-        return {
-            "status": "error",
-            "message": "Company profile not found"
-        }, 404
+        profile = EmployerProfile(
+            user_id=user_id,
+            company_name=company_name,
+            company_description=data.get("company_description"),
+            phone=data.get("phone"),
+            email=data.get("email"),
+            address=data.get("address"),
+            city=data.get("city"),
+            website=data.get("website")
+        )
 
-    data = request.get_json()
+        db.session.add(profile)
 
-    profile.company_name = data.get(
-        "company_name",
-        profile.company_name
-    )
+        message = "Company profile created successfully"
 
-    profile.company_description = data.get(
-        "company_description",
-        profile.company_description
-    )
+    # Update existing profile
+    else:
+        profile.company_name = data.get(
+            "company_name",
+            profile.company_name
+        )
 
-    profile.phone = data.get(
-        "phone",
-        profile.phone
-    )
+        profile.company_description = data.get(
+            "company_description",
+            profile.company_description
+        )
 
-    profile.email = data.get(
-        "email",
-        profile.email
-    )
+        profile.phone = data.get(
+            "phone",
+            profile.phone
+        )
 
-    profile.address = data.get(
-        "address",
-        profile.address
-    )
+        profile.email = data.get(
+            "email",
+            profile.email
+        )
 
-    profile.city = data.get(
-        "city",
-        profile.city
-    )
+        profile.address = data.get(
+            "address",
+            profile.address
+        )
 
-    profile.website = data.get(
-        "website",
-        profile.website
-    )
+        profile.city = data.get(
+            "city",
+            profile.city
+        )
+
+        profile.website = data.get(
+            "website",
+            profile.website
+        )
+
+        message = "Company profile updated successfully"
 
     db.session.commit()
 
     return {
         "status": "success",
-        "message": "Company profile updated successfully",
+        "message": message,
         "profile": profile.to_dict()
     }, 200
