@@ -4122,53 +4122,37 @@ function EmployerJobsPage() {
                         : "active"
                     }`}
                   >
-                    {job.status ||
-                      "ACTIVE"}
+                    <span className="status-dot"></span>
+                    {job.status || "ACTIVE"}
                   </span>
                 </div>
-
                 <div className="employer-job-metrics">
                   <div>
-                    <span>
-                      Experience
-                    </span>
-
+                    <span>Experience:</span>
                     <strong>
-                      {job.required_experience ??
-                        0}{" "}
-                      years
+                      {job.required_experience ?? 0} years
                     </strong>
                   </div>
 
                   <div>
-                    <span>
-                      Salary
-                    </span>
-
+                    <span>Salary:</span>
                     <strong>
-                      {formatSalary(
-                        job.salary
-                      )}
+                      {formatSalary(job.salary)}
                     </strong>
                   </div>
 
                   <div>
-                    <span>
-                      Working Hours
-                    </span>
-
+                    <span>Working Hours:</span>
                     <strong>
-                      {job.working_hours ||
-                        "Not specified"}
+                      {job.working_hours || "Not specified"}
                     </strong>
                   </div>
                 </div>
 
+                
                 {job.description && (
                   <div className="employer-job-description">
-                    <span>
-                      DESCRIPTION
-                    </span>
+                    <span>DESCRIPTION</span>
 
                     <p>
                       {job.description}
@@ -4178,14 +4162,13 @@ function EmployerJobsPage() {
 
                 {job.required_documents && (
                   <div className="employer-job-documents">
-                    <span>
-                      REQUIRED DOCUMENTS
-                    </span>
+                    <span>REQUIRED DOCUMENTS</span>
 
                     <p>
                       {job.required_documents}
                     </p>
                   </div>
+                  
                 )}
 
                 <div className="employer-job-actions">
