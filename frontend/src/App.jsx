@@ -182,6 +182,7 @@ function App() {
 function AuthScreen({ onLogin }) {
   const [mode, setMode] = useState("login");
   const [role, setRole] = useState("DRIVER");
+  const [showAuth, setShowAuth] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -228,19 +229,14 @@ function AuthScreen({ onLogin }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Something went wrong"
-        );
+        throw new Error(data.message || "Something went wrong");
       }
 
       if (mode === "login") {
         onLogin(data);
       } else {
         setMode("login");
-
-        setError(
-          "Registration successful. Please login."
-        );
+        setError("Registration successful. Please login.");
 
         setForm({
           name: "",
@@ -256,207 +252,434 @@ function AuthScreen({ onLogin }) {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-left">
-        <div className="brand-large">
-          <div className="brand-icon">
-            <BriefcaseBusiness size={30} />
+    <div className="auth-page-premium">
+      <div className="auth-noise"></div>
+
+      <header className="landing-nav">
+        <div className="landing-brand">
+          <div className="landing-brand-mark">
+            <BriefcaseBusiness size={22} strokeWidth={2.4} />
           </div>
 
-          <span>
-            Driver
-            <span className="brand-accent">Hub</span>
-          </span>
+          <div>
+            <div className="landing-brand-name">
+              Driver<span>Hub</span>
+            </div>
+            <div className="landing-brand-caption">
+              DRIVER CAREER PLATFORM
+            </div>
+          </div>
         </div>
 
-        <div className="hero-content">
-          <span className="hero-badge">
-            DRIVER CAREER PLATFORM
+        <div className="landing-nav-right">
+          <span className="nav-status">
+            <span className="status-pulse"></span>
+            Platform online
           </span>
+
+          <button
+            type="button"
+            className="nav-login-link"
+            onClick={() => {
+              setMode("login");
+              setError("");
+              setShowAuth(true);
+            }}
+          >
+            Sign in
+          </button>
+        </div>
+      </header>
+
+      <main className="landing-main">
+        <section className="landing-copy">
+          <div className="eyebrow-pill">
+            <span className="eyebrow-dot"></span>
+            THE SMARTER WAY TO DRIVE YOUR CAREER
+          </div>
 
           <h1>
-            Connect drivers with
-            <span> better opportunities.</span>
+            Your next
+            <span> driving opportunity</span>
+            starts here.
           </h1>
 
-          <p>
-            Driver Hub connects skilled drivers with
-            trusted employers, making job discovery and
-            hiring simple, transparent and efficient.
+          <p className="landing-description">
+            Discover trusted driving jobs, build a verified professional
+            profile, and connect with employers looking for people like you.
           </p>
 
-          <div className="hero-features">
-            <div>
-              <CheckCircle2 size={20} />
-              <span>Verified job opportunities</span>
-            </div>
-
-            <div>
-              <CheckCircle2 size={20} />
-              <span>Professional driver profiles</span>
-            </div>
-
-            <div>
-              <CheckCircle2 size={20} />
-              <span>Simple application tracking</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="auth-right">
-        <div className="auth-card">
-          <div className="auth-heading">
-            <h2>
-              {mode === "login"
-                ? "Welcome back"
-                : "Create your account"}
-            </h2>
-
-            <p>
-              {mode === "login"
-                ? "Sign in to continue to Driver Hub"
-                : "Join the Driver Hub platform today"}
-            </p>
-          </div>
-
-          {mode === "register" && (
-            <div className="form-group">
-              <label>Full Name</label>
-
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                value={form.name}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    name: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-          )}
-
-          {mode === "register" && (
-            <div className="role-selector">
-              <label>Account Type</label>
-
-              <div className="role-options">
-                <button
-                  type="button"
-                  className={
-                    role === "DRIVER"
-                      ? "role-active"
-                      : ""
-                  }
-                  onClick={() => setRole("DRIVER")}
-                >
-                  <User size={18} />
-                  Driver
-                </button>
-
-                <button
-                  type="button"
-                  className={
-                    role === "EMPLOYER"
-                      ? "role-active"
-                      : ""
-                  }
-                  onClick={() => setRole("EMPLOYER")}
-                >
-                  <Building2 size={18} />
-                  Employer
-                </button>
-              </div>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Email Address</label>
-
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    email: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Password</label>
-
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={form.password}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    password: e.target.value,
-                  })
-                }
-                required
-              />
-            </div>
-
-            {error && (
-              <div
-                className={
-                  error.includes("successful")
-                    ? "success-message"
-                    : "error-message"
-                }
-              >
-                {error}
-              </div>
-            )}
+          <div className="landing-actions">
+            <button
+              type="button"
+              className="landing-primary"
+              onClick={() => {
+                setMode("register");
+                setRole("DRIVER");
+                setError("");
+                setShowAuth(true);
+              }}
+            >
+              Create driver profile
+              <span>→</span>
+            </button>
 
             <button
-              className="primary-btn auth-btn"
-              disabled={loading}
+              type="button"
+              className="landing-secondary"
+              onClick={() => {
+                setMode("login");
+                setError("");
+                setShowAuth(true);
+              }}
             >
-              {loading
-                ? "Please wait..."
-                : mode === "login"
-                ? "Sign In"
-                : "Create Account"}
+              Explore the platform
+              <span>↗</span>
             </button>
-          </form>
-
-          <div className="auth-switch">
-            {mode === "login" ? (
-              <>
-                Don't have an account?
-
-                <button
-                  onClick={() => setMode("register")}
-                >
-                  Create account
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?
-
-                <button
-                  onClick={() => setMode("login")}
-                >
-                  Sign in
-                </button>
-              </>
-            )}
           </div>
-        </div>
-      </div>
+
+          <div className="trust-row">
+            <div className="trust-item">
+              <CheckCircle2 size={18} />
+              <span>Verified opportunities</span>
+            </div>
+
+            <div className="trust-item">
+              <ShieldCheck size={18} />
+              <span>Secure profiles</span>
+            </div>
+
+            <div className="trust-item">
+              <Award size={18} />
+              <span>Career focused</span>
+            </div>
+          </div>
+
+          <div className="landing-metrics">
+            <div>
+              <strong>10K+</strong>
+              <span>Drivers</span>
+            </div>
+            <div>
+              <strong>500+</strong>
+              <span>Employers</span>
+            </div>
+            <div>
+              <strong>1.2K+</strong>
+              <span>Opportunities</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="landing-visual" aria-label="DriverHub product preview">
+          <div className="visual-glow"></div>
+          <div className="visual-orbit orbit-one"></div>
+          <div className="visual-orbit orbit-two"></div>
+
+          <div className="match-card glass-card">
+            <div className="glass-card-top">
+              <span className="mini-label">DRIVER MATCH</span>
+              <span className="verified-chip">
+                <CheckCircle2 size={13} />
+                Verified
+              </span>
+            </div>
+
+            <div className="match-score">
+              <strong>94%</strong>
+              <span>Excellent match</span>
+            </div>
+
+            <div className="match-bar">
+              <span></span>
+            </div>
+
+            <div className="match-list">
+              <div>
+                <CheckCircle2 size={15} />
+                <span>License verified</span>
+              </div>
+              <div>
+                <CheckCircle2 size={15} />
+                <span>Experience matched</span>
+              </div>
+              <div>
+                <CheckCircle2 size={15} />
+                <span>Location compatible</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="job-preview-card glass-card">
+            <div className="job-preview-icon">
+              <BriefcaseBusiness size={20} />
+            </div>
+
+            <div className="job-preview-content">
+              <span className="mini-label">NEW OPPORTUNITY</span>
+              <strong>Heavy Vehicle Driver</strong>
+              <span className="job-preview-company">
+                ABC Logistics · Bangalore
+              </span>
+
+              <div className="job-preview-bottom">
+                <b>₹25K – ₹35K / month</b>
+                <span>View role →</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="profile-card glass-card">
+            <div className="profile-avatar">
+              <User size={20} />
+            </div>
+            <div>
+              <span className="mini-label">PROFILE STRENGTH</span>
+              <strong>80% complete</strong>
+              <div className="profile-progress">
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <div className="visual-center">
+            <div className="center-ring">
+              <div className="center-logo">
+                <BriefcaseBusiness size={34} />
+              </div>
+            </div>
+
+            <span>DRIVERHUB</span>
+            <small>CONNECT · DRIVE · GROW</small>
+          </div>
+        </section>
+
+        {showAuth && (
+          <div
+            className="auth-modal-overlay"
+            onClick={() => setShowAuth(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {showAuth && (
+          <aside className="auth-panel-wrap auth-modal-wrap">
+            <div className="auth-panel">
+              <button
+                type="button"
+                className="auth-modal-close"
+                onClick={() => setShowAuth(false)}
+                aria-label="Close sign in"
+              >
+                <X size={18} />
+              </button>
+            <div className="auth-panel-head">
+              <div className="auth-panel-icon">
+                {mode === "login" ? (
+                  <BriefcaseBusiness size={21} />
+                ) : (
+                  <User size={21} />
+                )}
+              </div>
+
+              <div>
+                <span className="auth-panel-kicker">
+                  DRIVERHUB ACCESS
+                </span>
+
+                <h2>
+                  {mode === "login"
+                    ? "Welcome back."
+                    : "Build your profile."}
+                </h2>
+
+                <p>
+                  {mode === "login"
+                    ? "Sign in to continue your career journey."
+                    : "Join drivers and employers using DriverHub."}
+                </p>
+              </div>
+            </div>
+
+            {mode === "register" && (
+              <div className="form-group premium-form-group">
+                <label>Full Name</label>
+                <div className="input-shell">
+                  <User size={17} />
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        name: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
+            {mode === "register" && (
+              <div className="role-selector premium-role-selector">
+                <label>Choose your account</label>
+
+                <div className="role-options premium-role-options">
+                  <button
+                    type="button"
+                    className={role === "DRIVER" ? "role-active" : ""}
+                    onClick={() => setRole("DRIVER")}
+                  >
+                    <User size={18} />
+                    <span>
+                      <b>Driver</b>
+                      <small>Find opportunities</small>
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={role === "EMPLOYER" ? "role-active" : ""}
+                    onClick={() => setRole("EMPLOYER")}
+                  >
+                    <Building2 size={18} />
+                    <span>
+                      <b>Employer</b>
+                      <small>Hire drivers</small>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <div className="form-group premium-form-group">
+                <label>Email Address</label>
+
+                <div className="input-shell">
+                  <span className="input-symbol">@</span>
+
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        email: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group premium-form-group">
+                <div className="label-row">
+                  <label>Password</label>
+                  {mode === "login" && (
+                    <span className="secure-label">
+                      <ShieldCheck size={13} />
+                      Secure login
+                    </span>
+                  )}
+                </div>
+
+                <div className="input-shell">
+                  <span className="input-symbol">••</span>
+
+                  <input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        password: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div
+                  className={
+                    error.includes("successful")
+                      ? "success-message premium-message"
+                      : "error-message premium-message"
+                  }
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                className="primary-btn auth-btn premium-auth-btn"
+                disabled={loading}
+              >
+                <span>
+                  {loading
+                    ? "Please wait..."
+                    : mode === "login"
+                    ? "Sign in to DriverHub"
+                    : "Create my account"}
+                </span>
+                {!loading && <span className="button-arrow">→</span>}
+              </button>
+            </form>
+
+            <div className="auth-panel-divider">
+              <span>OR</span>
+            </div>
+
+            <div className="auth-switch premium-auth-switch">
+              {mode === "login" ? (
+                <>
+                  <span>New to DriverHub?</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("register");
+                      setError("");
+                    }}
+                  >
+                    Create free account
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span>Already have an account?</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("login");
+                      setError("");
+                    }}
+                  >
+                    Sign in
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="auth-security-note">
+              <ShieldCheck size={16} />
+              <span>Your account and application data are protected.</span>
+            </div>
+          </div>
+        </aside>
+        )}
+      </main>
+
+      <footer className="landing-footer">
+        <span>© 2026 DriverHub</span>
+        <span>Built for drivers. Designed for opportunity.</span>
+        <span>Secure career platform</span>
+      </footer>
     </div>
   );
 }
